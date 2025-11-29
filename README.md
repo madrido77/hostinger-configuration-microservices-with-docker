@@ -77,19 +77,19 @@ Plik:
 
 /etc/nginx/sites-available/registry
 
-Wklej:
   server {
       listen 80;
       server_name registry.twojadomena.pl;
       return 301 https://$host$request_uri;
   }
+  
   server {
       listen 443 ssl;
       server_name registry.twojadomena.pl;
-  
+      
       ssl_certificate /etc/letsencrypt/live/registry.twojadomena.pl/fullchain.pem;
       ssl_certificate_key /etc/letsencrypt/live/registry.twojadomena.pl/privkey.pem;
-  
+      
       client_max_body_size 0;
       
       location / {
@@ -105,7 +105,7 @@ Wklej:
           auth_basic_user_file /opt/registry/auth/htpasswd;
       }
   }
-
+  
 Włącz i restartuj:
 
 sudo ln -s /etc/nginx/sites-available/registry /etc/nginx/sites-enabled/registry

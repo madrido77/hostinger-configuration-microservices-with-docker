@@ -5,7 +5,9 @@ hostinger configuration microservices with docker
 Jeśli nie masz jeszcze Dockera:
 
 sudo apt update
+
 sudo apt install -y docker.io docker-compose
+
 sudo systemctl enable docker --now
 
 ✅ 2. Uruchomienie prywatnego Docker Registry
@@ -75,46 +77,41 @@ Plik:
 
 /etc/nginx/sites-available/registry
 
-LUB +++++++ 
-/etc/nginx/sites-available/registry
-
-
 Wklej:
-
-server {
-    listen 80;
-    server_name registry.twojadomena.pl;
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 443 ssl;
-    server_name registry.twojadomena.pl;
-
-    ssl_certificate /etc/letsencrypt/live/registry.twojadomena.pl/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/registry.twojadomena.pl/privkey.pem;
-
-    client_max_body_size 0;
-    
-    location / {
-        root   /var/www/html/;
-        index index.nginx-debian.html;
-    }
-
-    location /v2/ {
-        proxy_pass http://127.0.0.1:5000;
-        proxy_set_header Host $http_host;
-
-        auth_basic "Docker Registry";
-        auth_basic_user_file /opt/registry/auth/htpasswd;
-    }
-}
-
+  server {
+      listen 80;
+      server_name registry.twojadomena.pl;
+      return 301 https://$host$request_uri;
+  }
+  server {
+      listen 443 ssl;
+      server_name registry.twojadomena.pl;
+  
+      ssl_certificate /etc/letsencrypt/live/registry.twojadomena.pl/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/registry.twojadomena.pl/privkey.pem;
+  
+      client_max_body_size 0;
+      
+      location / {
+          root   /var/www/html/;
+          index index.nginx-debian.html;
+      }
+  
+      location /v2/ {
+          proxy_pass http://127.0.0.1:5000;
+          proxy_set_header Host $http_host;
+  
+          auth_basic "Docker Registry";
+          auth_basic_user_file /opt/registry/auth/htpasswd;
+      }
+  }
 
 Włącz i restartuj:
 
 sudo ln -s /etc/nginx/sites-available/registry /etc/nginx/sites-enabled/registry
+
 sudo nginx -t
+
 sudo systemctl reload nginx
 
 ✅ 5. Uruchom registry z Basic Auth
